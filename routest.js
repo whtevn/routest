@@ -1,37 +1,55 @@
 var Routest = {}
-  , colors = require('colors');
+  , colors = require('colors')
+  , _ = require('underscore')
   ;
 
+Routest.setup = function(setup){
+  Routest.config = setup;
+  Routest.config.conditions = (Routest.config.conditions||{});
+  return Routest
+}
 
-function expectations(original, opposite){
+Routest.expect = function (original, opposite){
   var result
     ;
   return {
     toEqual: function(item){
-      if(opposite){
-        result = (item != original);
-      }else{
-        result = (item == original);
-      }
-      return message(original, item, result);
+      result = (item == original);
+      return message(original, item, result, opposite);
     }
   , toBe: function(item){
-      if(opposite){
-        result = (item !== original);
-      }else{
-        result = (item === original);
-      }
+      result = (item === original);
       return message(original, item, result, opposite);
     }
   , not: function(){
-      return expectations(original, true);
+      return Routest.expect(original, true);
     }
   } 
 }
 
-function message(original, item, result, opposite){
-  var result
+Routest.run = function(config){
+  config = (config||{});
+  config = _.extend(Routest.config.conditions, config);
+
+  //console.log(config);
+  var response = config
+    , db = 'frank'
     ;
+  return {
+    then: function(func){
+            func.call(this, response, db);
+          }
+  }
+  //setup.route = mangleRoute(setup.route, setup.conditions);
+  // make api call based on Routest.config
+  // return a promise with the api call response
+  // and a hook to mess with the database
+}
+
+function message(original, item, result, opposite){
+  result = (opposite&&!result||result)
+    ;
+  
   original = mungeItemForMessage(original);
   item = mungeItemForMessage(item);
   if(opposite){
@@ -58,22 +76,7 @@ function mungeItemForMessage(item){
   return "'"+item+"'"
 }
 
-Routest.setup = function(setup){
-  Routest.config = setup;
-  Routest.config.conditions = (Routest.config.conditions||{});
-}
 
-Routest.run = function(setup){
-  setup = _.merge(Routest.config.conditions, setup);
-  setup.route = mangleRoute(setup.route, setup.conditions);
-  // make api call based on Routest.config
-  // return a promise with the api call response
-  // and a hook to mess with the database
-}
-
-Routest.expect = function(item){
-  return expectations(item); 
-}
 
 module.exports = Routest;
 
