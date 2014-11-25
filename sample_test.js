@@ -1,4 +1,7 @@
-Routest = require('routest');
+var Routest = require('routest')
+  , expect = Routest.expect
+  ;
+
 getUser = setup({
   route:"/user/:id"
   method: "GET"
@@ -9,7 +12,7 @@ getUser
   .run({
     id: "user_1"
   })
-  .then(function(response, db)
+  .then(function(response, db){
   });
 
 Setup({
@@ -43,7 +46,7 @@ setup({
           , age: 37
           }
   })
-  .then(function(response, db)
+  .then(function(response, db){
     expect(response).toBe("{\"success\": \"true\"}");
     db.query("SELECT * FROM USERS")
       .then(function(result){
