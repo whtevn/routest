@@ -39,7 +39,7 @@ setup({
 
 */
 setup({
-  route: "/user"
+  route: "user"
 , method: "POST"
 })
   .run({

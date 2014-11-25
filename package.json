@@ -34,6 +34,7 @@
   "dependencies": {
     "colors": "~1.0.3",
     "underscore": "~1.7.0",
-    "promiseus": "git://github.com/whtevn/promiseus"
+    "httpromise": "git://github.com/sdicgdev/httpromise",
+    "configen": "git://github.com/sdicgdev/configen"
   }
 }

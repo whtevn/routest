@@ -1,6 +1,11 @@
 var Routest = {}
-  , colors = require('colors')
-  , _ = require('underscore')
+  , _          = require('underscore')
+  , colors     = require('colors')
+  , httpromise = require('httpromise')
+  , route      = new httpromise()
+  , configen   = require('configen')
+                  .generate('./configen.json')
+                  .register('route', route)
   ;
 
 Routest.setup = function(setup){
@@ -28,22 +33,26 @@ Routest.expect = function (original, opposite){
 }
 
 Routest.run = function(config){
+  console.log(config);
   config = (config||{});
   config = _.extend(Routest.config.conditions, config);
-
-  //console.log(config);
   var response = config
     , db = 'frank'
     ;
-  return {
-    then: function(func){
-            func.call(this, response, db);
-          }
-  }
   //setup.route = mangleRoute(setup.route, setup.conditions);
   // make api call based on Routest.config
   // return a promise with the api call response
   // and a hook to mess with the database
+
+  return configen.route
+    .then(function(route){
+      route.post(Routest.config.route, {body: config.body})
+          .then(function(responseObj){
+            console.log(responseObj);
+          })
+      func.call(this, response, db);
+    });
+
 }
 
 function message(original, item, result, opposite){
