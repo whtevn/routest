@@ -1,0 +1,40 @@
+{
+  "name": "routest",
+  "author": "Evan Short",
+  "description": "simple, stupid, agnostic integration testing for APIs and the mysql databases that serve them",
+  "version": "0.0.3",
+  "bin": {
+    "migrit": "./bin/migrit"
+  },
+  "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whtevn/migrit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/whtevn/migrit/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/whtevn/migrit/blob/master/LICENSE"
+    }
+  ],
+  "engines": {
+    "node": ">=0.8.26"
+  },
+  "keywords": [
+    "cli",
+    "database",
+    "utility",
+    "migrate",
+    "schema"
+  ],
+  "scripts": {},
+  "dependencies": {
+    "colors": "~1.0.3",
+    "underscore": "~1.7.0",
+    "httpromise": "git://github.com/sdicgdev/httpromise",
+    "configen": "git://github.com/sdicgdev/configen"
+  }
+}

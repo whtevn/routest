@@ -1,11 +1,13 @@
-var Routest = require('routest')
+var Routest = require('./routest')
   , expect = Routest.expect
+  , setup  = Routest.setup
   ;
 
+  /*
 getUser = setup({
   route:"/user/:id"
-  method: "GET"
-  fixtures: "default"
+, method: "GET"
+, fixtures: "default"
 })
 
 getUser
@@ -15,10 +17,10 @@ getUser
   .then(function(response, db){
   });
 
-Setup({
+setup({
     route:"/user/:id"
-    method: "GET"
-    conditions: {
+  , method: "GET"
+  , conditions: {
       id: "user_2"
     }
   })
@@ -26,18 +28,18 @@ Setup({
   .then(function(response, db){
   });
 
-Setup({
+setup({
     route:"/user"
-    method: "GET"
+  , method: "GET"
   })
   .run()
   .then(function(response, db){
   });
 
 
-
+*/
 setup({
-  route: "/user"
+  route: "user"
 , method: "POST"
 })
   .run({
@@ -47,6 +49,8 @@ setup({
           }
   })
   .then(function(response, db){
+    console.log(response);
+    console.log(db);
     expect(response).toBe("{\"success\": \"true\"}");
     db.query("SELECT * FROM USERS")
       .then(function(result){
