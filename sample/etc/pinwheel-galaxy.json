@@ -1,4 +1,5 @@
 {
+  "scheme": "http://",
   "host": "evan.local",
   "port": 1234,
   "path": "/api/v1/",

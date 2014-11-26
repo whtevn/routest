@@ -3,7 +3,7 @@ var Routest = require('../../routest')
   ;
 
 Routest
-  .setup(__dirname+'/../etc/pinwheel-galaxy.json'
+  .setup('pinwheel-galaxy.json'
   , {
       path: "user"
     , method: "POST"

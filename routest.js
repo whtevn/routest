@@ -3,22 +3,32 @@ var Routest = {}
   , colors     = require('colors')
   , httpromise = require('httpromise')
   , configen   = require('configen')
+  , confoo     = require('confoo').find
   ;
 
 Routest.setup = function(file, setup){
-  configen = configen.generate(file);
-  configen.register(new httpromise());
-  Routest.configen = configen._.then(function(api){
-    Routest.api = api;
-    return Routest;
-  });
-  configen.run = function(config){
-    return Routest.configen.then(function(){
-      console.log('here');
+
+  var config = confoo(file)
+    .then(function(file){
+      console.log(file);
+      configen = configen.generate(file);
+      configen.register(new httpromise());
+      return Routest.configen = configen._.then(function(api){
+        Routest.api = api;
+        return Routest;
+      });
+
+      return configen._
+    });
+
+  config.run = function(options){
+    return config.then(function(c){
+      var method = (setup.method||'get').toLowerCase();
+      
+      return Routest.api[method](setup.path, options);
     }); 
   }
-
-  return configen
+  return config
 }
 
 Routest.expect = function (original, opposite){

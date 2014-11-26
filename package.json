@@ -33,8 +33,12 @@
   "scripts": {},
   "dependencies": {
     "colors": "~1.0.3",
-    "underscore": "~1.7.0",
+    "configen": "git://github.com/sdicgdev/configen",
+    "confoo": "git://github.com/whtevn/confoo",
     "httpromise": "git://github.com/sdicgdev/httpromise",
-    "configen": "git://github.com/sdicgdev/configen"
+    "underscore": "~1.7.0"
+  },
+  "devDependencies": {
+    "q-io": "^1.11.6"
   }
 }
