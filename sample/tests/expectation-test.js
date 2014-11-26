@@ -1,4 +1,4 @@
-var Routest = require('./routest')
+var Routest = require('../../routest')
   , expect = Routest.expect
   ;
 

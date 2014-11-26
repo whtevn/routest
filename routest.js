@@ -2,16 +2,23 @@ var Routest = {}
   , _          = require('underscore')
   , colors     = require('colors')
   , httpromise = require('httpromise')
-  , route      = new httpromise()
   , configen   = require('configen')
-                  .generate('./configen.json')
-                  .register('route', route)
   ;
 
-Routest.setup = function(setup){
-  Routest.config = setup;
-  Routest.config.conditions = (Routest.config.conditions||{});
-  return Routest
+Routest.setup = function(file, setup){
+  configen = configen.generate(file);
+  configen.register(new httpromise());
+  Routest.configen = configen._.then(function(api){
+    Routest.api = api;
+    return Routest;
+  });
+  configen.run = function(config){
+    return Routest.configen.then(function(){
+      console.log('here');
+    }); 
+  }
+
+  return configen
 }
 
 Routest.expect = function (original, opposite){
@@ -33,7 +40,7 @@ Routest.expect = function (original, opposite){
 }
 
 Routest.run = function(config){
-  console.log(config);
+  console.log("running");
   config = (config||{});
   config = _.extend(Routest.config.conditions, config);
   var response = config
@@ -44,14 +51,22 @@ Routest.run = function(config){
   // return a promise with the api call response
   // and a hook to mess with the database
 
-  return configen.route
-    .then(function(route){
-      route.post(Routest.config.route, {body: config.body})
-          .then(function(responseObj){
-            console.log(responseObj);
-          })
-      func.call(this, response, db);
-    });
+    try{
+      return {
+        then: function(func){
+          return configen.route
+            .then(function(route){
+              route.post(Routest.config.route, {body: config.body})
+                  .then(function(responseObj){
+                    console.log(responseObj);
+                    func.call(this, response, db);
+                  })
+            });
+        }
+      }
+    }catch(err){
+      console.log(err.stack);
+    }
 
 }
 
