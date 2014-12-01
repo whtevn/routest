@@ -1,0 +1,21 @@
+confoo - configuration file lookup library (currently part of migrit)
+
+configen - promise based configuration file usage library
+
+httpromise - promise based api resource usage library in node
+
+migrit 
+  - environment agnostic mysql schema migration tool and database snapshotter
+  - invoked via command line
+      e.g. 
+        $ migrit [up|down|import|export] [options]
+
+routest 
+  - api testing framework
+  - included in testing files, invoked by node
+      e.g. 
+        $ node testing-file.js
+
+devup 
+  - feature management layer 
+  - most typically accessed through gulp, grunt, etc
