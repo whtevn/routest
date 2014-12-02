@@ -29,15 +29,15 @@ Routest.setup = function(file, setup){
   return config
 }
 
-Routest.expect = function (original, opposite){
+Routest.expect = function (item, opposite){
   var result
     ;
   return {
-    toEqual: function(item){
+    toEqual: function(original){
       result = (item == original);
       return message(original, item, result, opposite);
     }
-  , toBe: function(item){
+  , toBe: function(original){
       result = (item === original);
       return message(original, item, result, opposite);
     }

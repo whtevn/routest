@@ -1,9 +1,10 @@
 var Routest = require('../../routest')
-  , test
+  , db      = Routest.fixtures('default');
+  , expect  = Routest.expect
   ;
 
+
 Routest
-  .fixtures('default')
   .setup('pinwheel-galaxy.json'
   , {
       path: "user"
