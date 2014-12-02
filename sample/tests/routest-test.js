@@ -1,5 +1,5 @@
 var Routest = require('../../routest')
-  , db      = Routest.fixtures('default');
+  , db      = Routest.fixtures()
   , expect  = Routest.expect
   ;
 
@@ -18,15 +18,11 @@ Routest
     }
   })
   .then(function(response){
-    expect(response).toBe("{\"success\": \"true\"}");
-    db.query("SELECT * FROM USERS")
+    return db.query("SELECT * FROM users")
       .then(function(result){
-        expect(result.length).toBe(6);
+        console.log(result);
+        //expect(result.length).toBe(6);
       });
   })
-  // setup is what runs the database reset
-  // if rolling tests are desired, store the result of 
-  // `setup` and then `run` that variable several times
-  // with whatever inputs you like
+  .then(Routest.end);
 
-      

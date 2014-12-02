@@ -1,0 +1,12 @@
+{
+	"user_1": {
+		"id": "user_1",
+		"first": "evan",
+		"last": "short"
+	},
+	"user_2": {
+		"id": "user_2",
+		"first": "rob",
+		"last": "soden"
+	}
+}

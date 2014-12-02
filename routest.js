@@ -4,7 +4,46 @@ var Routest = {}
   , httpromise = require('httpromise')
   , configen   = require('configen')
   , confoo     = require('confoo').find
+  , migrit     = require('migrit');
   ;
+
+Routest.end = function(){
+  migrit.sql.connection.end();
+}
+
+Routest.fixtures = function(name, database){
+  name     = name || 'default';
+  database = database || 'testing';
+
+  migrit.config
+    .then(function(config){
+      var additive  = false
+        , keepalive = true
+        ;
+
+      return migrit.importer(config, database, name, additive, keepalive);
+    })
+    .then(function(){
+      return migrit.sql
+    })
+    .catch(function(err){
+      console.log(err);
+      console.log(err.stack);
+    });
+
+  return {
+    query: function(sql){
+      return migrit.config
+        .then(function(config){
+          return migrit.sql.query(sql);
+        })
+        .catch(function(err){
+          console.log(err);
+        })
+        ;
+    }
+  }
+}
 
 Routest.setup = function(file, setup){
   var config = confoo(file)

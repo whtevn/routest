@@ -34,8 +34,9 @@
   "dependencies": {
     "colors": "~1.0.3",
     "configen": "git://github.com/sdicgdev/configen",
-    "confoo": "git://github.com/whtevn/confoo",
+    "confoo": "^0.0.2",
     "httpromise": "git://github.com/sdicgdev/httpromise",
+    "migrit": "0.0.6",
     "underscore": "~1.7.0"
   },
   "devDependencies": {

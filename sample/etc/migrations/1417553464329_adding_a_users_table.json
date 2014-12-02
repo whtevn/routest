@@ -1,0 +1,11 @@
+{
+	"author": "",
+	"description": "adding a users table",
+	"created_at": 1417553464329,
+	"up": [
+		"CREATE TABLE users(id VARCHAR(255) PRIMARY KEY) "
+	],
+	"down": [
+		"DROP TABLE users"
+	]
+}
