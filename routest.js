@@ -7,10 +7,8 @@ var Routest = {}
   ;
 
 Routest.setup = function(file, setup){
-
   var config = confoo(file)
     .then(function(file){
-      console.log(file);
       configen = configen.generate(file);
       configen.register(new httpromise());
       return Routest.configen = configen._.then(function(api){

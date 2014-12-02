@@ -3,6 +3,7 @@ var Routest = require('../../routest')
   ;
 
 Routest
+  .fixtures('default')
   .setup('pinwheel-galaxy.json'
   , {
       path: "user"
@@ -15,9 +16,7 @@ Routest
     , age: 37
     }
   })
-  .then(function(response, db){
-    console.log(response);
-    console.log(db);
+  .then(function(response){
     expect(response).toBe("{\"success\": \"true\"}");
     db.query("SELECT * FROM USERS")
       .then(function(result){
