@@ -32,8 +32,8 @@
     "configen": "git://github.com/sdicgdev/configen",
     "confoo": "^0.0.2",
     "httpromise": "git://github.com/sdicgdev/httpromise",
-    "migrit": "0.0.6",
+    "migrit": "latest",
     "underscore": "~1.7.0",
     "q-io": "^1.11.6"
-  }
+  },
 }
