@@ -16,7 +16,7 @@ Routest.fixtures = function(name, database){
   name     = name || 'default';
   database = database || 'testing';
 
-  migrit.config
+  Routest.fixture_setup = migrit.config
     .then(function(config){
       var additive  = false
         , keepalive = true
