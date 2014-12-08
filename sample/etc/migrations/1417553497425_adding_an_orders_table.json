@@ -1,0 +1,13 @@
+{
+	"author": "",
+	"description": "adding an orders table",
+	"created_at": 1417553497425,
+	"up": [
+		"CREATE TABLE orders(id VARCHAR(255) PRIMARY KEY) "
+	, "ALTER TABLE orders ADD name VARCHAR(255)"
+	, "ALTER TABLE orders ADD price NUMERIC(15,2)"
+	],
+	"down": [
+    "DROP TABLE orders"
+	]
+}

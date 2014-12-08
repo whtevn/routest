@@ -1,0 +1,13 @@
+{
+	"author": "",
+	"description": "adding a users name information",
+	"created_at": 1417553480407,
+	"up": [
+		"ALTER TABLE users ADD first VARCHAR(255)"
+	, "ALTER TABLE users ADD last VARCHAR(255)"
+	],
+	"down": [
+		"ALTER TABLE users DROP COLUMN first"
+	, "ALTER TABLE users DROP COLUMN last"
+	]
+}

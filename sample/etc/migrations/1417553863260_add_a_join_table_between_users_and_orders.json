@@ -1,0 +1,11 @@
+{
+	"author": "",
+	"description": "add a join table between users and orders",
+	"created_at": 1417553863260,
+	"up": [
+		"CREATE TABLE users_orders(user_id VARCHAR(255), order_id VARCHAR(255)) "
+	],
+	"down": [
+		"DROP TABLE users_orders"
+	]
+}

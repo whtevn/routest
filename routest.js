@@ -4,13 +4,50 @@ var Routest = {}
   , httpromise = require('httpromise')
   , configen   = require('configen')
   , confoo     = require('confoo').find
+  , migrit     = require('migrit');
   ;
 
-Routest.setup = function(file, setup){
+Routest.end = function(){
+  migrit.sql.connection.end();
+}
 
+Routest.fixtures = function(name, database){
+  name     = name || 'default';
+  database = database || 'testing';
+
+  migrit.config
+    .then(function(config){
+      var additive  = false
+        , keepalive = true
+        ;
+
+      return migrit.importer(config, database, name, additive, keepalive);
+    })
+    .then(function(){
+      return migrit.sql
+    })
+    .catch(function(err){
+      console.log(err);
+      console.log(err.stack);
+    });
+
+  return {
+    query: function(sql){
+      return migrit.config
+        .then(function(config){
+          return migrit.sql.query(sql);
+        })
+        .catch(function(err){
+          console.log(err);
+        })
+        ;
+    }
+  }
+}
+
+Routest.setup = function(file, setup){
   var config = confoo(file)
     .then(function(file){
-      console.log(file);
       configen = configen.generate(file);
       configen.register(new httpromise());
       return Routest.configen = configen._.then(function(api){
@@ -31,15 +68,15 @@ Routest.setup = function(file, setup){
   return config
 }
 
-Routest.expect = function (original, opposite){
+Routest.expect = function (item, opposite){
   var result
     ;
   return {
-    toEqual: function(item){
+    toEqual: function(original){
       result = (item == original);
       return message(original, item, result, opposite);
     }
-  , toBe: function(item){
+  , toBe: function(original){
       result = (item === original);
       return message(original, item, result, opposite);
     }
