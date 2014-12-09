@@ -4,7 +4,8 @@ var Routest = {}
   , httpromise = require('httpromise')
   , configen   = require('configen')
   , confoo     = require('confoo').find
-  , migrit     = require('migrit');
+  , migrit     = require('migrit')
+  , q          = require('Q')
   ;
 
 Routest.end = function(){
@@ -15,7 +16,7 @@ Routest.fixtures = function(name, database){
   name     = name || 'default';
   database = database || 'testing';
 
-  migrit.config
+  Routest.fixture_setup = migrit.config
     .then(function(config){
       var additive  = false
         , keepalive = true
@@ -46,6 +47,8 @@ Routest.fixtures = function(name, database){
 }
 
 Routest.setup = function(file, setup){
+  var deferred = q.defer();
+  deferred.resolve();
   var config = confoo(file)
     .then(function(file){
       configen = configen.generate(file);
@@ -59,11 +62,14 @@ Routest.setup = function(file, setup){
     });
 
   config.run = function(options){
-    return config.then(function(c){
-      var method = (setup.method||'get').toLowerCase();
-      
-      return Routest.api[method](setup.path, options);
-    }); 
+    return q.all([(Routest.fixture_setup||deferred.promise), config]).then(
+      function(c){
+        c = c[1]
+        var method = (setup.method||'get').toLowerCase();
+        
+        return Routest.api[method](setup.path, options);
+      }
+    ); 
   }
   return config
 }
