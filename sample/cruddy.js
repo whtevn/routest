@@ -8,78 +8,59 @@ function model(name, env){
   this.env   = env;
 }
 
-
-model.prototype.get = function(where){
-  var name = this.name
-    , env  = this.env
+model.prototype.get = function(item){
+  var where = ""
+    , sql
     ;
-  if(where && where.id){
-    where = " WHERE id = '"+where.id+"'"; 
-  }else{
-    where = ''
+  if(item){
+    where = " WHERE "; 
+    where = where + _.map(item, function(val, key){
+      return key+" = '"+val+"'"
+    }).join(" AND ");
   }
-  return migrit.config
-    .then(function(conf){
-      migrit.sql.connect(conf, env);
-      return migrit.sql.query("SELECT * FROM "+name+where)
-    })
+  sql = "SELECT * FROM "+this.name+where
+  return this.sql(sql)
 }
 
 model.prototype.push = function(item){
-  var name  = this.name
-    , env   = this.env
-    , _this = this
-    ;
   item.id = uuid.v4();
-  return migrit.config
-    .then(function(conf){
-      migrit.sql.connect(conf, env);
-      var sql = "INSERT INTO "+name
-        , values = _.values(item)
-                    .map(function(i){
-                      return("'"+i+"'");
-                    }).join(",");
-        ;
-      sql = sql+"("+_.keys(item).join(",")+")VALUES("+values+")";
-      return migrit.sql.query(sql);
-    })
-    .then(function(){
-      return _this.get(item);
-    })
-    .catch(function(err){
-      console.log(err);
-    });
+  var _this  = this
+    , sql    = "INSERT INTO "+this.name
+    , values = _.values(item)
+                .map(function(i){
+                  return("'"+i+"'");
+                }).join(",");
+    ;
+  sql = sql+"("+_.keys(item).join(",")+")VALUES("+values+")";
+  return this.sql(sql)
+             .then(function(){
+               return _this.get({id: item.id});
+             })
 }
 
 model.prototype.put = function(id, item){
-  var name  = this.name
-    , env   = this.env
-    , _this = this
-    ;
   delete item.id
-  return migrit.config
-    .then(function(conf){
-      migrit.sql.connect(conf, env);
-      var sql = "UPDATE "+name+" SET "
-        , values = _.map(item, function(val, key){
-                    return(key+" = '"+val+"'");
-                  }).join(",");
-        ;
-      sql = sql+values+" WHERE id = '"+id+"'";
-      return migrit.sql.query(sql);
-    })
+  var _this = this
+    , sql = "UPDATE "+this.name+" SET "
+    , values = _.map(item, function(val, key){
+                return(key+" = '"+val+"'");
+              }).join(",")
+    ;
+
+  return this.sql(sql+values+" WHERE id = '"+id+"'")
     .then(function(){
       return _this.get({id: id});
     })
 }
 
 model.prototype.delete = function(id){
-  var name  = this.name
-    , env   = this.env
-    ;
+  return this.sql("DELETE FROM "+this.name+" WHERE id = '"+id+"'");
+}
+
+model.prototype.sql = function(sql){
+  var env = this.env;
   return migrit.config
     .then(function(conf){
-      var sql = "DELETE FROM "+name+" WHERE id = '"+id+"'"
       migrit.sql.connect(conf, env);
       return migrit.sql.query(sql);
     })
