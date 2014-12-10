@@ -8,21 +8,20 @@ Routest
   .setup('sample-app.json'
   , {
       path: "users"
-    , method: "POST"
+    , method: "GET"
     }
   )
-  .run({
-    body: {
-      first: "new"
-    , last: "user"
-    }
-  })
+  .run()
   .then(function(response){
+    var body = JSON.parse(response.body);
+      ;
     return db.query("SELECT * FROM users")
       .then(function(result){
-        console.log(result);
-        //expect(result.length).toBe(6);
-      });
+        expect(body.length).toBe(result.length);
+        body.forEach(function(user){
+          expect(user).toBeIn(result);
+        })
+      })
   })
   .then(Routest.end);
 
