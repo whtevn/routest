@@ -24,7 +24,7 @@ app.get('/users', function (req, response) {
 app.post('/users', function(req, response){
   userModel.push(req.body)
     .then(function(result){
-      response.send(result);
+      response.send(result.shift());
     })
 })
 
