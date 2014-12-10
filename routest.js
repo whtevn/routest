@@ -4,74 +4,51 @@ var Routest = {}
   , httpromise = require('httpromise')
   , configen   = require('configen')
   , confoo     = require('confoo').find
-  , migrit     = require('migrit')
   , q          = require('Q')
+  , situation  = require('./situation')
   ;
 
-Routest.end = function(){
-  migrit.sql.connection.end();
-}
-
-Routest.fixtures = function(name, database){
-  name     = name || 'default';
-  database = database || 'testing';
-
-  Routest.fixture_setup = migrit.config
-    .then(function(config){
-      var additive  = false
-        , keepalive = true
-        ;
-
-      return migrit.importer(config, database, name, additive, keepalive);
-    })
-    .then(function(){
-      return migrit.sql
-    })
-    .catch(function(err){
-      console.log(err);
-      console.log(err.stack);
-    });
-
-  return {
-    query: function(sql){
-      return migrit.config
-        .then(function(config){
-          return migrit.sql.query(sql);
-        })
-        .catch(function(err){
-          console.log(err);
-        })
-        ;
-    }
-  }
-}
+Routest.situations = [];
 
 Routest.setup = function(file, setup){
-  var deferred = q.defer();
-  deferred.resolve();
-  var config = confoo(file)
+  var sitch
+    , config
+    , deferred = q.defer()
+    ;
+  particulars = confoo(file)
     .then(function(file){
-      configen = configen.generate(file);
-      configen.register(new httpromise());
-      return Routest.configen = configen._.then(function(api){
+      conf = configen.generate(file);
+      conf.register(new httpromise());
+      return Routest.configen = conf._.then(function(api){
         Routest.api = api;
         return Routest;
       });
 
-      return configen._
+      return configen._;
     });
+  sitch = new situation(setup, particulars, deferred); 
+  Routest.situations.push(sitch);
+  return sitch
+}
 
-  config.run = function(options){
-    return q.all([(Routest.fixture_setup||deferred.promise), config]).then(
-      function(c){
-        c = c[1]
-        var method = (setup.method||'get').toLowerCase();
-        
-        return Routest.api[method](setup.path, options);
-      }
-    ); 
+Routest.start = function(situations){
+  var pass_deferred = q.defer()
+    , sitch;
+  pass_deferred.resolve();
+  situations = (situations || Routest.situations);
+  if(situations.length>0){
+    sitch = situations.shift();
+
+    return sitch.checkOnFixtures()
+      .then(function(){
+        return sitch.eatAndRun();
+      })
+      .then(function(){
+        return Routest.start(situations);
+      })
+  }else{
+    console.log("that's all folks");
   }
-  return config
 }
 
 Routest.expect = function (item, opposite){
