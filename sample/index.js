@@ -1,59 +1,12 @@
-var express    = require('express')
+var env        = (process.argv[2]||'local')
+  , express    = require('express')
   , bodyParser = require('body-parser')
   , app        = express()
-  , userModel  = new model('users')
-  , orderModel = new model('orders')
-  , migrit     = require('migrit')
-  , uuid       = require('node-uuid')
-  , _          = require('underscore')
-  , env        = (process.argv[2]||'local')
+  , cruddy     = require('./cruddy')
+  , userModel  = new cruddy('users', env)
+  , orderModel = new cruddy('orders', env)
   ;
 
-function model(name){
-  this.stash = [];
-  this.name  = name;
-}
-
-
-model.prototype.get = function(where){
-  var name = this.name;
-  if(where && where.id){
-    where = " WHERE id = '"+where.id+"'"; 
-  }else{
-    where = ''
-  }
-  return migrit.config
-    .then(function(conf){
-      console.log('env: ', env);
-      migrit.sql.connect(conf, env);
-      return migrit.sql.query("SELECT * FROM "+name+where)
-    })
-}
-
-model.prototype.push = function(item){
-  var name  = this.name
-    , _this = this
-    ;
-  item.id = uuid.v4();
-  return migrit.config
-    .then(function(conf){
-      migrit.sql.connect(conf, env);
-      var sql = "INSERT INTO "+name
-        , values = _.values(item)
-                    .map(function(i){
-                      return("'"+i+"'");
-                    }).join(",");
-        ;
-      sql = sql+"("+_.keys(item).join(",")+")VALUES("+values+")";
-      return migrit.sql.query(sql);
-    })
-    .then(function(){
-      return _this.get(item);
-    })
-    .catch(function(err){
-      console.log(err);
-    });
-}
 
 app.use(bodyParser.json());
 
@@ -74,6 +27,24 @@ app.post('/users', function(req, response){
       response.send(result);
     })
 })
+
+app.put('/users/:id', function(req, response){
+  userModel.put(req.params.id, req.body)
+    .then(function(result){
+      response.send(result);
+    })
+})
+
+app.delete('/users/:id', function(req, response){
+  userModel.delete(req.params.id)
+    .then(function(result){
+      response.send({success: true});
+    })
+    .catch(function(err){
+      console.log(err);
+    })
+})
+
 
 app.get('/orders', function (req, res) {
   orderModel.get()
