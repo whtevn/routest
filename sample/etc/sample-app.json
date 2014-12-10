@@ -1,10 +1,11 @@
 {
   "scheme": "http://",
-  "host": "evan.local",
-  "port": 1234,
-  "path": "/api/v1/",
+  "host": "localhost",
+  "port": 3300,
+  "path": "/",
   "ssl":false,
   "headers":{
     "Content-Type": "application/json"
   }
 }
+

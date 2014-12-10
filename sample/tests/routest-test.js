@@ -5,24 +5,23 @@ var Routest = require('../../routest')
 
 
 Routest
-  .setup('pinwheel-galaxy.json'
+  .setup('sample-app.json'
   , {
-      path: "user"
-    , method: "POST"
+      path: "users"
+    , method: "GET"
     }
   )
-  .run({
-    body: {
-      name: "user name"
-    , age: 37
-    }
-  })
+  .run()
   .then(function(response){
+    var body = JSON.parse(response.body);
+      ;
     return db.query("SELECT * FROM users")
       .then(function(result){
-        console.log(result);
-        //expect(result.length).toBe(6);
-      });
+        expect(body.length).toBe(result.length);
+        body.forEach(function(user){
+          expect(user).toBeIn(result);
+        })
+      })
   })
   .then(Routest.end);
 

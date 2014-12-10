@@ -86,6 +86,18 @@ Routest.expect = function (item, opposite){
       result = (item === original);
       return message(original, item, result, opposite);
     }
+  , toBeIn: function(original){
+      original = original.map(JSON.stringify);
+      result = original.indexOf(JSON.stringify(item)) > -1;
+      original = original.map(JSON.parse);
+      return message(original, item, result, opposite, 'be in');
+    }
+  , toContain: function(original){
+      item = item.map(JSON.stringify);
+      result = item.indexOf(JSON.stringify(original)) > -1;
+      item = item.map(JSON.parse);
+      return message(original, item, result, opposite, 'contain');
+    }
   , not: function(){
       return Routest.expect(original, true);
     }
@@ -123,16 +135,18 @@ Routest.run = function(config){
 
 }
 
-function message(original, item, result, opposite){
+function message(original, item, result, opposite, verb){
   result = (opposite&&!result||result)
     ;
+
+  verb = (verb||'be');
   
   original = mungeItemForMessage(original);
   item = mungeItemForMessage(item);
   if(opposite){
-    msg = 'expected '+original+' not to be '+item+', '+(result?'and it was not':'but it was');
+    msg = 'expected '+item+' not to '+verb+' '+original;
   }else{
-    msg = 'expected '+original+' '+(result?'and':'but')+' got '+ item;
+    msg = 'expected '+item+' to '+verb+' '+original;
   }
   console.log();
   console.log(msg[result?'green':'red']);
