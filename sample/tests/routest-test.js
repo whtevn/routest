@@ -5,16 +5,16 @@ var Routest = require('../../routest')
 
 
 Routest
-  .setup('pinwheel-galaxy.json'
+  .setup('sample-app.json'
   , {
-      path: "user"
+      path: "users"
     , method: "POST"
     }
   )
   .run({
     body: {
-      name: "user name"
-    , age: 37
+      first: "new"
+    , last: "user"
     }
   })
   .then(function(response){
