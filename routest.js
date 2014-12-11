@@ -27,27 +27,41 @@ Routest.setup = function(file, setup){
       return configen._;
     });
   sitch = new situation(setup, particulars, deferred); 
-  Routest.situations.push(sitch);
+  Routest.situations.push({
+    promise: deferred.promise
+  , deferred: deferred
+  , situation: sitch
+  });
   return sitch
 }
 
-Routest.start = function(situations){
-  var pass_deferred = q.defer()
-    , sitch;
-  pass_deferred.resolve();
-  situations = (situations || Routest.situations);
-  if(situations.length>0){
-    sitch = situations.shift();
+Routest.start = function(promise){
+  var sitch = Routest.situations.shift()
+    , deferred = q.defer()
+    ;
+  if(!promise){
+    promise = deferred.promise;
+    deferred.resolve();
+  }
 
-    return sitch.checkOnFixtures()
-      .then(function(){
-        return sitch.eatAndRun();
-      })
-      .then(function(){
-        return Routest.start(situations);
-      })
+  if(sitch){
+    return promise
+            .then(function(){
+              return sitch.situation.eatAndRun()
+                .then(function(){
+                  sitch.deferred.resolve();
+                })
+            })
+            .then(function(){
+              return Routest.start(sitch.promise);
+            })
+            .catch(function(err){
+              console.log(err);
+            })
   }else{
-    console.log("that's all folks");
+    promise.then(function(){
+      console.log("that's all folks");
+    })
   }
 }
 
@@ -81,36 +95,6 @@ Routest.expect = function (item, opposite){
   } 
 }
 
-Routest.run = function(config){
-  console.log("running");
-  config = (config||{});
-  config = _.extend(Routest.config.conditions, config);
-  var response = config
-    , db = 'frank'
-    ;
-  //setup.route = mangleRoute(setup.route, setup.conditions);
-  // make api call based on Routest.config
-  // return a promise with the api call response
-  // and a hook to mess with the database
-
-    try{
-      return {
-        then: function(func){
-          return configen.route
-            .then(function(route){
-              route.post(Routest.config.route, {body: config.body})
-                  .then(function(responseObj){
-                    console.log(responseObj);
-                    func.call(this, response, db);
-                  })
-            });
-        }
-      }
-    }catch(err){
-      console.log(err.stack);
-    }
-
-}
 
 function message(original, item, result, opposite, verb){
   result = (opposite&&!result||result)

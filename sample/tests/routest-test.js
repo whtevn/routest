@@ -11,21 +11,20 @@ test_env = Routest
     , method: "GET"
     }
   )
+  .before(function(){
+    return test_env.fixtures()
+                   .then(function(connection){
+                     db = connection
+                   });
+  })
   
-db = test_env.fixtures()
-
-  // each time a fixture is created, add a promise to an array
-  //
-  // do not start a situation until that array has all promises resolved
-  //
-  // the array goes in routest. stop situations before they start with promises
 
 test_env
   .run()
-  .then(function(response){
+  .test(function(response){
     var body = JSON.parse(response.body);
       ;
-    return test_env.query("SELECT * FROM users")
+    return db.query("SELECT * FROM users")
       .then(function(result){
         expect(body.length).toBe(result.length);
         body.forEach(function(user){
@@ -33,36 +32,16 @@ test_env
         })
       })
   })
-  .then(function(){
-    return test_env.fixtures();
-  })
-  .catch(function(err){
-    console.log(err.stack);
-  })
-  
-test_env
-  .run()
-  .then(function(response){
-    var body = JSON.parse(response.body);
-      ;
-    return test_env.query("SELECT * FROM users")
-      .then(function(result){
-        expect(body.length).toBe(result.length);
-        body.forEach(function(user){
-          expect(user).toBeIn(result);
-        })
-      })
-  })
-  .then(function(){
+  .after(function(test){
     return test_env.fixtures();
   })
 
 test_env
   .run()
-  .then(function(response){
+  .test(function(response){
     var body = JSON.parse(response.body);
       ;
-    return test_env.query("SELECT * FROM users")
+    return db.query("SELECT * FROM users")
       .then(function(result){
         expect(body.length).toBe(result.length);
         body.forEach(function(user){
@@ -71,4 +50,7 @@ test_env
       })
   })
 
-Routest.start();
+Routest.start()
+  .then(function(){
+    db.connection.end();
+  });
