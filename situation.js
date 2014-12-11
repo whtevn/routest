@@ -1,5 +1,6 @@
 var q          = require('Q')
   , migrit     = require('migrit')
+  , _          = require('underscore')
   ;
 function situation(setup, config, deferred){
   this.run_tank = [];
@@ -82,6 +83,10 @@ situation.prototype.run = function(options){
      return _this.config.then(function(config){
       var method = (_this.setup.method||'get').toLowerCase();
       
+      options = options||{}
+      options.body = (options.body||config.body)
+      options.form = (options.form||config.form)
+      options.params = (options.params||config.params)
       return config.api[method](_this.setup.path, options)
         .then(function(result){
           deferred.resolve(result);

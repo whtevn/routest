@@ -31,10 +31,10 @@
     "colors": "~1.0.3",
     "configen": "git://github.com/sdicgdev/configen",
     "confoo": "latest",
-    "httpromise": "git://github.com/sdicgdev/httpromise",
+    "httpromise": "0.0.1",
     "migrit": "latest",
-    "underscore": "~1.7.0",
-    "q": "~1.1.2"
+    "q": "~1.1.2",
+    "underscore": "~1.7.0"
   },
   "devDependencies": {
     "body-parser": "^1.10.0",

@@ -89,14 +89,26 @@ Routest.expect = function (item, opposite){
       item = item.map(JSON.parse);
       return message(original, item, result, opposite, 'contain');
     }
+  , toBeGreaterThan: function(original){
+      result = (item > original);
+      return message(original, item, result, opposite, 'be greater than');
+    }
+  , toBeTruthy: function(original){
+      result = item;
+      return message(original, item, result, opposite, 'be truthy', true);
+    }
+  , toBeFalsy: function(original){
+      result = !item;
+      return message(original, item, result, opposite, 'be falsy', true);
+    }
   , not: function(){
-      return Routest.expect(original, true);
+      return Routest.expect(item, true);
     }
   } 
 }
 
 
-function message(original, item, result, opposite, verb){
+function message(original, item, result, opposite, verb, no_original){
   result = (opposite&&!result||result)
     ;
 
@@ -105,9 +117,9 @@ function message(original, item, result, opposite, verb){
   original = mungeItemForMessage(original);
   item = mungeItemForMessage(item);
   if(opposite){
-    msg = 'expected '+item+' not to '+verb+' '+original;
+    msg = 'expected '+item+' not to '+verb+' '+(no_original?'':original)
   }else{
-    msg = 'expected '+item+' to '+verb+' '+original;
+    msg = 'expected '+item+' to '+verb+' '+(no_original?'':original)
   }
   console.log();
   console.log(msg[result?'green':'red']);
