@@ -27,27 +27,41 @@ Routest.setup = function(file, setup){
       return configen._;
     });
   sitch = new situation(setup, particulars, deferred); 
-  Routest.situations.push(sitch);
+  Routest.situations.push({
+    promise: deferred.promise
+  , deferred: deferred
+  , situation: sitch
+  });
   return sitch
 }
 
-Routest.start = function(situations){
-  var pass_deferred = q.defer()
-    , sitch;
-  pass_deferred.resolve();
-  situations = (situations || Routest.situations);
-  if(situations.length>0){
-    sitch = situations.shift();
+Routest.start = function(promise){
+  var sitch = Routest.situations.shift()
+    , deferred = q.defer()
+    ;
+  if(!promise){
+    promise = deferred.promise;
+    deferred.resolve();
+  }
 
-    return sitch.checkOnFixtures()
-      .then(function(){
-        return sitch.eatAndRun();
-      })
-      .then(function(){
-        return Routest.start(situations);
-      })
+  if(sitch){
+    return promise
+            .then(function(){
+              return sitch.situation.eatAndRun()
+                .then(function(){
+                  sitch.deferred.resolve();
+                })
+            })
+            .then(function(){
+              return Routest.start(sitch.promise);
+            })
+            .catch(function(err){
+              console.log(err);
+            })
   }else{
-    console.log("that's all folks");
+    promise.then(function(){
+      console.log("that's all folks");
+    })
   }
 }
 
