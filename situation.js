@@ -37,10 +37,10 @@ situation.prototype.fixtures = function(name, database){
   return migrit.config
     .then(function(config){
       var additive  = false
-        , keepalive = true
+        , quiet     = true
         ;
 
-      return migrit.importer(config, database, name, additive, keepalive);
+      return migrit.importer(config, database, name, additive, quiet);
     })
     .then(function(){
       deferred.resolve();
@@ -87,6 +87,7 @@ situation.prototype.run = function(options){
       options.body = (options.body||config.body)
       options.form = (options.form||config.form)
       options.params = (options.params||config.params)
+      console.log("\n", method.toUpperCase().yellow, config.api.buildRequest(method, _this.setup.path, options).uri.magenta); 
       return config.api[method](_this.setup.path, options)
         .then(function(result){
           deferred.resolve(result);
@@ -121,7 +122,8 @@ situation.prototype.eatAndRun = function(promise){
             })
   }else{
     return promise.then(function(){
-      console.log("done eating");
+      // scenario performance report could go here
+      //console.log("done eating");
     })
   }
 }

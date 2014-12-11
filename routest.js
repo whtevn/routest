@@ -60,7 +60,8 @@ Routest.start = function(promise){
             })
   }else{
     promise.then(function(){
-      console.log("that's all folks");
+      //console.log("that's all folks");
+      // whole file report could go here
     })
   }
 }
