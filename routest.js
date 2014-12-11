@@ -35,7 +35,7 @@ Routest.setup = function(file, setup){
   return sitch
 }
 
-Routest.start = function(promise){
+Routest.run = function(promise){
   var sitch = Routest.situations.shift()
     , deferred = q.defer()
     ;
@@ -53,7 +53,7 @@ Routest.start = function(promise){
                 })
             })
             .then(function(){
-              return Routest.start(sitch.promise);
+              return Routest.run(sitch.promise);
             })
             .catch(function(err){
               console.log(err);

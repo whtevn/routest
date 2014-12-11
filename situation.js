@@ -18,21 +18,11 @@ situation.prototype.query = function(sql){
   }
 
 situation.prototype.fixtures = function(name, database){
-  name     = name || 'default';
-  database = database || 'testing';
-  var deferred = q.defer()
-    , _this    = this
+  var _this    = this
     ;
 
-  if(this.fixture_promise && this.fixture_promise.then){
-    this.fixture_promise.then(function(){
-      delete _this.fixture_promise;
-    })
-  }
-
-  this.fixture_promise = (this.fixture_promise || [])
-  this.fixture_promise.push(deferred.promise);
-
+  name     = name || 'default';
+  database = database || 'testing';
 
   return migrit.config
     .then(function(config){
@@ -40,17 +30,16 @@ situation.prototype.fixtures = function(name, database){
         , quiet     = true
         ;
 
+    console.log();
       return migrit.importer(config, database, name, additive, quiet);
     })
     .then(function(){
-      deferred.resolve();
       return migrit.sql
     })
     .catch(function(err){
       console.log(err);
       console.log(err.stack);
     });
-
 }
 
 situation.prototype.before = function(func){

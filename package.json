@@ -29,9 +29,9 @@
   "main": "./routest",
   "dependencies": {
     "colors": "~1.0.3",
-    "configen": "git://github.com/sdicgdev/configen",
+    "configen": "latest",
     "confoo": "latest",
-    "httpromise": "0.0.1",
+    "httpromise": "latest",
     "migrit": "latest",
     "q": "~1.1.2",
     "underscore": "~1.7.0"

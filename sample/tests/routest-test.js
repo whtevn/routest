@@ -80,10 +80,15 @@ test_env
              });
 
   })
+  .after(function(){
+    // be nice and clean up the database if you change it
+    return test_env.fixtures();
+  })
 
 
 
-Routest.start()
-  .then(function(){
+module.exports = Routest.run()
+  .then(function(result){
     db.connection.end();
+    return result;
   });
