@@ -95,36 +95,6 @@ Routest.expect = function (item, opposite){
   } 
 }
 
-Routest.run = function(config){
-  console.log("running");
-  config = (config||{});
-  config = _.extend(Routest.config.conditions, config);
-  var response = config
-    , db = 'frank'
-    ;
-  //setup.route = mangleRoute(setup.route, setup.conditions);
-  // make api call based on Routest.config
-  // return a promise with the api call response
-  // and a hook to mess with the database
-
-    try{
-      return {
-        then: function(func){
-          return configen.route
-            .then(function(route){
-              route.post(Routest.config.route, {body: config.body})
-                  .then(function(responseObj){
-                    console.log(responseObj);
-                    func.call(this, response, db);
-                  })
-            });
-        }
-      }
-    }catch(err){
-      console.log(err.stack);
-    }
-
-}
 
 function message(original, item, result, opposite, verb){
   result = (opposite&&!result||result)

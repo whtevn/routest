@@ -19,11 +19,6 @@ test_env = Routest
   })
   
 
-  // each time a fixture is created, add a promise to an array
-  //
-  // do not start a situation until that array has all promises resolved
-  //
-  // the array goes in routest. stop situations before they start with promises
 test_env
   .run()
   .test(function(response){
