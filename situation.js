@@ -87,7 +87,7 @@ situation.prototype.run = function(options){
       options.body = (options.body||config.body)
       options.form = (options.form||config.form)
       options.params = (options.params||config.params)
-      console.log("\n", method.toUpperCase().yellow, config.api.buildRequest(method, _this.setup.path, options).uri.magenta); 
+      console.log("\n", method.toUpperCase().magenta, config.api.buildRequest(method, _this.setup.path, options).uri.yellow); 
       return config.api[method](_this.setup.path, options)
         .then(function(result){
           deferred.resolve(result);
