@@ -55,4 +55,7 @@ test_env
       })
   })
 
-Routest.start();
+Routest.start()
+  .then(function(){
+    db.connection.end();
+  });
