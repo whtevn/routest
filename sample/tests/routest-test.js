@@ -24,6 +24,10 @@ test_env
   .test(function(response){
     var body = JSON.parse(response.body);
       ;
+
+    expect(response.statusCode).toBe(200)
+      .because('the call should succeed');
+
     return db.query("SELECT * FROM users")
       .then(function(result){
         expect(body.length).toBe(result.length);
