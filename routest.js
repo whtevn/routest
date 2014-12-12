@@ -66,70 +66,147 @@ Routest.run = function(promise){
   }
 }
 
-Routest.expect = function (item, opposite){
+Routest.expect = function (description, item){
+  if(!item){
+    item = description;
+    description = undefined;
+  }
+
   var result
+    , new_item = {
+        item: item
+      , description: description
+      }
     ;
   return {
-    toEqual: function(original){
+    toEqual: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
       result = (item == original);
-      return message(original, item, result, opposite);
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result);
     }
-  , toBe: function(original){
+  , toBe: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
       result = (item === original);
-      return message(original, item, result, opposite);
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result);
     }
-  , toBeIn: function(original){
+  , toBeIn: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
       original = original.map(JSON.stringify);
       result = original.indexOf(JSON.stringify(item)) > -1;
       original = original.map(JSON.parse);
-      return message(original, item, result, opposite, 'be in');
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'be in');
     }
-  , toContain: function(original){
+  , toContain: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
       item = item.map(JSON.stringify);
       result = item.indexOf(JSON.stringify(original)) > -1;
-      item = item.map(JSON.parse);
-      return message(original, item, result, opposite, 'contain');
+      new_item.item = item.map(JSON.parse);
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'contain');
     }
-  , toBeGreaterThan: function(original){
+  , toBeGreaterThan: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
       result = (item > original);
-      return message(original, item, result, opposite, 'be greater than');
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'be greater than');
     }
-  , toBeTruthy: function(original){
+  , toBeTruthy: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
       result = item;
-      return message(original, item, result, opposite, 'be truthy', true);
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'be truthy', true);
     }
-  , toBeFalsy: function(original){
+  , toBeFalsy: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
       result = !item;
-      return message(original, item, result, opposite, 'be falsy', true);
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'be falsy', true);
     }
   , not: function(){
-      return Routest.expect(item, true);
+      return Routest.expectOpposite(description, item);
     }
   } 
 }
 
+Routest.expectOpposite = function(description, item){
+  Routest.oppositeDay = !Routest.oppositeDay;
+  return Routest.expect(description, item)
+}
 
-function message(original, item, result, opposite, verb, no_original){
-  result = (opposite&&!result||result)
-    ;
+
+function message(new_item, original, result, verb, no_original){
+  result = (Routest.oppositeDay&&!result||result);
+  item = new_item.item;
+  var description = new_item.description||item;
 
   verb = (verb||'be');
   
-  original = mungeItemForMessage(original);
+  var orig = mungeItemForMessage(original.item);
   item = mungeItemForMessage(item);
-  if(opposite){
-    msg = 'expected '+item+' not to '+verb+' '+(no_original?'':original)
+  if(Routest.oppositeDay){
+    msg = 'expected '+(description||item)+' not to '+verb+' '+(no_original?'':(original.description||orig))
   }else{
-    msg = 'expected '+item+' to '+verb+' '+(no_original?'':original)
+    msg = 'expected '+(description||item)+' to '+verb+' '+(no_original?'':(original.description||orig))
+  }
+  if(!result){
+    msg = msg+' but got '+item;
   }
   console.log();
   console.log(msg[result?'green':'red']);
+  if(Routest.oppositeDay){
+    Routest.expectOpposite();
+  }
   return {
     because: function(msg){
-      var modifier = result?'succeeded: ':'failed: ';
-      msg = modifier+msg
-      msg = msg[result?'green':'red'];
-      console.log(msg);
+      if(result){
+        msg = 'because '+msg
+        console.log(msg.green);
+      }
     }
   }
 }

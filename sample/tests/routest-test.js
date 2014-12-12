@@ -25,14 +25,16 @@ test_env
     var body = JSON.parse(response.body);
       ;
 
-    expect(response.statusCode).toBe(200)
+    expect('status code', response.statusCode).toBe(200)
       .because('the call should succeed');
 
     return db.query("SELECT * FROM users")
       .then(function(result){
-        expect(body.length).toBe(result.length);
+        expect('the number of users returned', body.length)
+          .toBe('the number in the database', result.length);
         body.forEach(function(user){
-          expect(user).toBeIn(result);
+          expect(user.first+' '+user.last, user)
+            .toBeIn('the database result set', result);
         })
       })
   })
@@ -64,18 +66,19 @@ test_env
     var body = JSON.parse(response.body)
       ;
 
-    expect(body.id).not().toBeFalsy()
+    expect("the new user's id", body.id).not().toBeFalsy()
       .because('it should have been set');
 
-    expect(body.first).toBe('new')
+    expect("the new user's first name", body.first).toBe('new')
       .because("that is the new user's first name");
 
-    expect(body.last).toBe('user')
+    expect("the new user's first name", body.last).toBe('user')
       .because("that is the new user's last name");
 
     return db.query("SELECT count(*) AS count FROM users")
              .then(function(result){
-               expect(result[0].count).toBeGreaterThan(test_env.tmp.user_count)
+               expect("the number of current users", result[0].count)
+                .toBeGreaterThan('the count taken before the call', test_env.tmp.user_count)
                 .because('a new user has been added');;
              });
 
