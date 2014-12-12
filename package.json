@@ -2,7 +2,7 @@
   "name": "routest",
   "author": "Evan Short",
   "description": "simple, stupid, agnostic integration testing for APIs and the mysql databases that serve them",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/whtevn/routest.git"
