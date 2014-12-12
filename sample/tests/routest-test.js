@@ -102,7 +102,12 @@ test_env = Routest
 test_env
   .before(function(){
     test_env.tmp = {given_user_id: 'user_1'}
-    return db.query('SELECT id, first, last FROM users WHERE id="'+test_env.tmp.given_user_id+'"')
+    return db.query(
+      "SELECT " +
+      " id, first, last "+
+      " FROM users "+
+      "WHERE id='"+test_env.tmp.given_user_id+"'"
+    )
      .then(function(result){
        test_env.tmp.result = result[0];
      });
@@ -120,8 +125,12 @@ test_env
     var body = JSON.parse(response.body)
       ;
 
-
-    return db.query(" SELECT id, first, last FROM users WHERE id='"+test_env.tmp.given_user_id+"'")
+    return db.query(
+      "SELECT " +
+      " id, first, last "+
+      " FROM users "+
+      "WHERE id='"+test_env.tmp.given_user_id+"'"
+    )
      .then(function(result){
       expect("the user's id", body.id).toBe(test_env.tmp.given_user_id)
         .because('it should not change');
