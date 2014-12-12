@@ -31,7 +31,7 @@ app.post('/users', function(req, response){
 app.put('/users/:id', function(req, response){
   userModel.put(req.params.id, req.body)
     .then(function(result){
-      response.send(result);
+      response.send(result.shift());
     })
 })
 

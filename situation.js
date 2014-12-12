@@ -70,14 +70,17 @@ situation.prototype.run = function(options){
     promise: deferred.promise
   , method: function(){
      return _this.config.then(function(config){
-      var method = (_this.setup.method||'get').toLowerCase();
+      var method  = (_this.setup.method||'get').toLowerCase()
+        , tmp_path 
       
       options = options||{}
+      tmp_path  = mergeRouteInfo(_this.setup.path, options.route, _this.tmp);
       options.body = (options.body||config.body)
       options.form = (options.form||config.form)
       options.params = (options.params||config.params)
-      console.log("\n", method.toUpperCase().magenta, config.api.buildRequest(method, _this.setup.path, options).uri.yellow); 
-      return config.api[method](_this.setup.path, options)
+      
+      console.log("\n", method.toUpperCase().magenta, config.api.buildRequest(method, tmp_path, options).uri.yellow); 
+      return config.api[method](tmp_path, options)
         .then(function(result){
           deferred.resolve(result);
           return(result);
@@ -86,6 +89,20 @@ situation.prototype.run = function(options){
     }
   });
   return this;
+}
+
+function mergeRouteInfo(path, info, bank){
+  info = (info||{});
+  _.pairs(info).forEach(function(pair){
+    var key = pair[0]
+      , val = pair[1]
+    if(val.match(/^@tmp\./)){
+      val = val.replace(/^@tmp\./, '');
+      val = bank[val];
+    }
+    path = path.replace(":"+key, val);
+  })
+  return path;
 }
 
 situation.prototype.eatAndRun = function(promise){
