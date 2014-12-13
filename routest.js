@@ -55,9 +55,6 @@ Routest.run = function(promise){
             .then(function(){
               return Routest.run(sitch.promise);
             })
-            .catch(function(err){
-              console.log(err);
-            })
   }else{
     promise.then(function(){
       //console.log("that's all folks");
@@ -166,6 +163,18 @@ Routest.expect = function (description, item){
       , description: description
       }
       return message(new_item, orig, result, 'be falsy', true);
+    }
+  , toBeLike: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
+      result = _.matches(original)(item);
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'be like');
     }
   , not: function(){
       return Routest.expectOpposite(description, item);
