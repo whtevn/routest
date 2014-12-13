@@ -154,6 +154,6 @@ test_env
 
 module.exports = Routest.run()
   .then(function(result){
-    db.connection.end();
+    db.kill();
     return result;
   });
