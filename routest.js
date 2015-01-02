@@ -140,6 +140,14 @@ Routest.expect = function (description, item){
       }
       return message(new_item, orig, result, 'be greater than');
     }
+  , toHaveNoDups: function(){
+      result = _.uniq(item).length == item.length
+      var orig = {
+        item: null
+      , description: null
+      }
+      return message(new_item, orig, result, 'be duplicate free', true);
+    }
   , toBeTruthy: function(description, original){
       if(!original){
         original = description;
