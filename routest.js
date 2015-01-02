@@ -195,14 +195,16 @@ function message(new_item, original, result, verb, no_original){
 
   verb = (verb||'be');
   
-  var orig = mungeItemForMessage(original.item);
+  var orig = mungeItemForMessage(original.item)
+    , err_msg = '';
   item = mungeItemForMessage(item);
+
   if(Routest.oppositeDay){
-    msg = 'expected '+(description||item)+' not to '+verb+' '+(no_original?'':(original.description||orig))
+    msg = 'expected '+(description||item)+' not to '+verb+' '+(no_original?'':((result && original.description)||orig))
   }else{
-    msg = 'expected '+(description||item)+' to '+verb+' '+(no_original?'':(original.description||orig))
+    msg = 'expected '+(description||item)+' to '+verb+' '+(no_original?'':((result && original.description)||orig))
   }
-  if(!result){
+  if(!result && description){
     msg = msg+' but got '+item;
   }
   console.log();
