@@ -100,6 +100,19 @@ Routest.expect = function (description, item){
       }
       return message(new_item, orig, result);
     }
+  , lengthToBe: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
+      result = (item.length == original);
+      new_item.item = item.length
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'length to be');
+    }
   , toBeIn: function(description, original){
       if(!original){
         original = description;
@@ -113,6 +126,47 @@ Routest.expect = function (description, item){
       , description: description
       }
       return message(new_item, orig, result, 'be in');
+    }
+  , toContainLike: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
+      item.forEach(function(i, key){
+        result = result||_.matches(original)(i);
+      })
+      new_item.item = item;
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'contain');
+    }
+  , toEachHaveSet: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
+      item.forEach(function(i){
+        result = result||i[original];
+      });
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'to each have the key');
+    }
+  , toHaveSet: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
+      result = item[original];
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'contain');
     }
   , toContain: function(description, original){
       if(!original){
@@ -158,7 +212,7 @@ Routest.expect = function (description, item){
         item: original
       , description: description
       }
-      return message(new_item, orig, result, 'be truthy', true);
+      return message(new_item, orig, result, 'be set', true);
     }
   , toBeFalsy: function(description, original){
       if(!original){
@@ -170,7 +224,7 @@ Routest.expect = function (description, item){
         item: original
       , description: description
       }
-      return message(new_item, orig, result, 'be falsy', true);
+      return message(new_item, orig, result, 'be unset', true);
     }
   , toBeLike: function(description, original){
       if(!original){
@@ -234,7 +288,10 @@ function mungeItemForMessage(item){
   if(typeof item == 'object'){
     item = JSON.stringify(item);
   }
-  return "'"+item+"'"
+  if(typeof item != 'number'){
+    item = "'"+item+"'";
+  }
+  return item;
 }
 
 
