@@ -226,6 +226,18 @@ Routest.expect = function (description, item){
       }
       return message(new_item, orig, result, 'be unset', true);
     }
+  , toBeEmpty: function(description, original){
+      if(!original){
+        original = description;
+        description = undefined;
+      }
+      result = item.length==0;
+      var orig = {
+        item: original
+      , description: description
+      }
+      return message(new_item, orig, result, 'be empty', true);
+    }
   , toBeLike: function(description, original){
       if(!original){
         original = description;
