@@ -251,7 +251,9 @@ Routest.expectOpposite = function(description, item){
 
 
 function message(new_item, original, result, verb, no_original){
-  result = (Routest.oppositeDay&&!result||result);
+  if(Routest.oppositeDay){
+    result = !result;
+  }
   item = new_item.item;
   var description = new_item.description||item;
 
