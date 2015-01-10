@@ -1,5 +1,5 @@
 var Routest = require('../../routest')
-  , expect  = Routest.expect
+  , expect  = require('../../expect')(Routest.runner)
   , test_env
   , db
   ;
@@ -34,7 +34,7 @@ test_env
           .toBe('the number in the database', result.length);
         body.forEach(function(user){
           expect(user.first+' '+user.last, user)
-            .toBeIn('the database result set', result);
+            .to.be.foundIn('the database result set', result);
         })
       })
   })
@@ -66,7 +66,7 @@ test_env
     var body = JSON.parse(response.body)
       ;
 
-    expect("the new user's id", body.id).not().toBeFalsy()
+    expect("the new user's id", body.id).to.exist()
       .because('it should have been set');
 
     expect("the new user's first name", body.first).toBe('new')
@@ -77,8 +77,8 @@ test_env
 
     return db.query("SELECT count(*) AS count FROM users")
              .then(function(result){
-               expect("the number of current users", result[0].count)
-                .toBeGreaterThan('the count taken before the call', test_env.tmp.user_count)
+               expect("the number three", 3)
+                .to.not.be.not.greaterThan('the concept zero', 0)
                 .because('a new user has been added');;
              });
 
