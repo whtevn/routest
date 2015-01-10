@@ -32,10 +32,10 @@ test_env
       .then(function(result){
         expect('the number of users returned', body.length)
           .toBe('the number in the database', result.length);
-        body.forEach(function(user){
-          expect(user.first+' '+user.last, user)
-            .to.be.foundIn('the database result set', result);
-        })
+        expect('the users returned', body)
+          .to.be.length('the number in the database', result.length)
+          .and.one().to.beLike(body[0])
+          .and.one().to.beLike(body[1])
       })
   })
 
