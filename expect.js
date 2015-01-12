@@ -4,16 +4,15 @@ var _      = require('underscore')
 
 function Expectation(description, value, not){
   this.original = determineValueOf(description, value);
+  this.oppositeDay = (this.oppositeDay||false);
 
   if(!not){
     this.not = this.nor = this.neither = new Expectation(description, value, this);
-    this.to = this.be = this.and = this.but = this;
     this.not.oppositeDay = true; 
   }else{
-    this.not = this.to = this.be = this.and = this.but = not;
-    this.oppositeDay = false;
-    this.nor = this.neither = this;
+    this.not = this.nor = this.neither = this;
   }
+  this.to = this.be = this.and = this.but = this;
 
   this.testValue  = {};
 }
@@ -172,7 +171,6 @@ Expectation.prototype.execute = function(testResult){
                         , this.batch
                         , this.silenceOriginal
                         );
-  console.log(this.message);
   return this.oppositeDay?this.not:this
 }
 

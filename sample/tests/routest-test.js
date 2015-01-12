@@ -34,8 +34,8 @@ test_env
           .toBe('the number in the database', result.length);
         expect('the users returned', body)
           .to.be.length('the number in the database', result.length)
-          .and.one().to.beLike(body[0])
-          .and.one().to.beLike(body[1])
+          .one().like(body[0])
+          .one().like(body[1])
       })
   })
 
@@ -78,7 +78,7 @@ test_env
     return db.query("SELECT count(*) AS count FROM users")
              .then(function(result){
                expect("the number three", 3)
-                .to.not.be.not.greaterThan('the concept zero', 0)
+                .to.be.greaterThan('the concept zero', 0)
                 .because('a new user has been added');;
              });
 

@@ -10,6 +10,7 @@ var Routest = {}
 
 Routest.runner = {
   add: function(item){
+    console.log(item);
     this.store.push(item);
     return item
   },
