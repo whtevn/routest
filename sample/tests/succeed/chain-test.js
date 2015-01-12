@@ -1,7 +1,6 @@
-var Routest = require('../../routest')
-  , expect  = require('../../expect')(Routest.runner)
+var Routest = require('../../../routest')
+  , expect  = require('../../../expect')(Routest.runner)
   ;
-
 expect(5)
   .toBe(5)
 
@@ -26,8 +25,7 @@ expect(5)
   .nor.toBe(6)
 
 expect(5)
-  .toBe(5)
-  .and.not.toBe(3)
+  .not.toBe(3)
   .nor.toBe(6)
   .and.greaterThan(3)
   .and.lessThan(6)

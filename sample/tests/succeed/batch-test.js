@@ -1,5 +1,5 @@
-var Routest = require('../../routest')
-  , expect  = require('../../expect')(Routest.runner)
+var Routest = require('../../../routest')
+  , expect  = require('../../../expect')(Routest.runner)
   , simpleRay = ['a', 'b', 'c']
   , objectRay = [{id: '1', name: 'frank'}, {id:'2', name: 'sally'}]
   ;

@@ -4,15 +4,13 @@ var _      = require('underscore')
 
 function Expectation(description, value, not){
   this.original = determineValueOf(description, value);
-  this.oppositeDay = (this.oppositeDay||false);
-
+  this.to = this.be = this.and = this.but = this;
   if(!not){
     this.not = this.nor = this.neither = new Expectation(description, value, this);
-    this.not.oppositeDay = true; 
   }else{
-    this.not = this.nor = this.neither = this;
+    this.oppositeDay = true;
+    this.not = this.nor = this.neither = not;
   }
-  this.to = this.be = this.and = this.but = this;
 
   this.testValue  = {};
 }
@@ -73,6 +71,15 @@ Expectation.prototype.empty = function(description){
   })
 }
 
+Expectation.prototype.unique = function(description){
+  this.silenceOriginal = true;
+  this.testValue.description = description;
+  this.verb = "to be unique";
+  return this.execute(function(original, testValue){
+    return original.length === _.uniq(original).length;
+  })
+}
+
 Expectation.prototype.match = function(description, value){
   this.testValue = determineValueOf(description, value); 
   this.verb = "to match";
@@ -90,6 +97,8 @@ Expectation.prototype.equal = function(description, value){
 }
 
 Expectation.prototype.length = function(description, value){
+  // todo: if no value is entered, make testValue.attr = 'length'
+  // curry off to (currently nonexistent) .attr('length') method
   this.testValue = determineValueOf(description, value); 
   this.verb = "to be length";
   return this.execute(function(original, testValue){
@@ -118,10 +127,7 @@ Expectation.prototype.haveSet = function(description, value){
   })
 }
 
-Expectation.prototype.unique = function(){
-}
-
-// expect(ray).atLeast.one().to.haveSet('batch_id')
+// atLeast, noMoreThan
 Expectation.prototype.each = function(){
   return this.n(this.original.value.length);
 }
@@ -171,6 +177,7 @@ Expectation.prototype.execute = function(testResult){
                         , this.batch
                         , this.silenceOriginal
                         );
+  console.log(this.message);
   return this.oppositeDay?this.not:this
 }
 
