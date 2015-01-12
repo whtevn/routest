@@ -1,7 +1,5 @@
 var Routest = require('../../routest')
   , expect  = require('../../expect')(Routest.runner)
-  , test_env
-  , db
   ;
 
 expect(5)

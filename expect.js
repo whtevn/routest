@@ -4,15 +4,15 @@ var _      = require('underscore')
 
 function Expectation(description, value, not){
   this.original = determineValueOf(description, value);
-  this.oppositeDay = false;
 
   if(!not){
     this.not = this.nor = this.neither = new Expectation(description, value, this);
-    this.not.oppositeDay = true; 
     this.to = this.be = this.and = this.but = this;
+    this.not.oppositeDay = true; 
   }else{
-    this.nor = this.neither = this;
     this.not = this.to = this.be = this.and = this.but = not;
+    this.oppositeDay = false;
+    this.nor = this.neither = this;
   }
 
   this.testValue  = {};
@@ -74,6 +74,14 @@ Expectation.prototype.empty = function(description){
   })
 }
 
+Expectation.prototype.match = function(description, value){
+  this.testValue = determineValueOf(description, value); 
+  this.verb = "to match";
+  return this.execute(function(original, testValue){
+    return original.match(testValue);
+  })
+}
+
 Expectation.prototype.equal = function(description, value){
   this.testValue = determineValueOf(description, value); 
   this.verb = "to equal";
@@ -90,11 +98,11 @@ Expectation.prototype.length = function(description, value){
   });
 }
 
-Expectation.prototype.beLike = function(description, value){
+Expectation.prototype.like = function(description, value){
   this.testValue = determineValueOf(description, value); 
   this.verb = "to be like";
   return this.execute(function(original, testValue){
-    return _.matches(original)(testValue);
+    return _.matches(testValue)(original);
   })
 }
 Expectation.prototype.toPass = function(description, value){
@@ -103,40 +111,55 @@ Expectation.prototype.toPass = function(description, value){
   return this.execute(value)
 }
 
-Expectation.prototype.contain = function(description, value){
+Expectation.prototype.haveSet = function(description, value){
+  this.testValue = determineValueOf(description, value); 
+  this.verb = "to have set";
+  return this.execute(function(original, testValue){
+    return original[testValue]
+  })
 }
-Expectation.prototype.containLike = function(description, value){
-}
-Expectation.prototype.haveSet = function(){
-}
+
 Expectation.prototype.unique = function(){
 }
 
 // expect(ray).atLeast.one().to.haveSet('batch_id')
 Expectation.prototype.each = function(){
-  return this.n(this.original.value.langth);
+  return this.n(this.original.value.length);
 }
 
 Expectation.prototype.one = function(){
   return this.n(1);
 }
 
+Expectation.prototype.none = function(){
+  return this.n(0);
+}
+
 Expectation.prototype.n = function(num){
   var batch = []
-    , _this = this
+    , runner = {
+        add: function(item){
+          this.store.push(item);
+          return item
+        },
+        store: []
+      }
     ;
+
   this.original.value.forEach(function(item){
-    var item = run(_this.runner)(item);
-    batch.push(item);
+    run(runner)(item);
   });
-  this.batch = batch;
+  runner.magicNumber = num;
+  this.batch = this.not.batch = runner;
   return this;
 }
 
 Expectation.prototype.execute = function(testResult){
+  var _this = this;
   if(this.batch){
-    this.batch.forEach(function(item, i){
-      console.log("BATCH "+i, item.result);
+    this.result = _.reject(this.batch.store, function(item, i){
+      var result = testResult(item.original.value, _this.testValue.value);
+      return !result;
     })
   }else{
     this.result  = testResult(this.original.value, this.testValue.value);
@@ -146,22 +169,31 @@ Expectation.prototype.execute = function(testResult){
                         , this.result
                         , this.verb
                         , this.oppositeDay
+                        , this.batch
                         , this.silenceOriginal
                         );
   console.log(this.message);
-  return this;
+  return this.oppositeDay?this.not:this
 }
 
 Expectation.prototype.because = function(explanation){
   this.explanation = explanation;
 }
 
-
-function message(original, testValue, result, verb, oppositeDay, silenceOriginal){
+function message(original, testValue, result, verb, oppositeDay, batch, silenceOriginal){
   var announceOppositeDay='';
+
   if(oppositeDay){
-    result = !result;
     announceOppositeDay='not ';
+    if(batch){
+      result = ((batch.store.length - result.length) === batch.magicNumber);
+    }else{
+      result = !result;
+    }
+  }else{
+    if(batch){
+      result = (result.length === batch.magicNumber);
+    }
   }
 
   msg = "expected "+(original.description||JSON.stringify(original.value))+" "+announceOppositeDay+verb;
