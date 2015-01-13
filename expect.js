@@ -123,7 +123,7 @@ Expectation.prototype.haveSet = function(description, value){
   this.testValue = determineValueOf(description, value); 
   this.verb = "to have set";
   return this.execute(function(original, testValue){
-    return original[testValue]
+    return original.hasOwnProperty(testValue)
   })
 }
 
