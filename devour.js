@@ -17,7 +17,8 @@ function listDirectory(dir){
 
 function eatAndRun(list){
   var item = list.shift();
-  return item && fs.isFile(item)
+  var report = array();
+  return (item && fs.isFile(item)
     .then(function(is_file){
       if(item && is_file && !item.match(/(\/|^)\./) && item.match(/test.js$/)){
         var cwd = '.'+item.replace(process.cwd(), '');
@@ -25,12 +26,22 @@ function eatAndRun(list){
         return require(item)
       }
     })
-    .then(function(){
+    .then(function(item){
+      if(item){
+        report.push(item);
+      }
       return eatAndRun(list);
     })
     .catch(function(err){
       console.log(err);
     });
+  )||(function(){
+    var total = _.reduce(report, function(a, b){
+      a.final.total += b.final.total
+    }, 0)
+
+    console.log('end total', total);
+  })
 }
 
 module.exports = listDirectory;
