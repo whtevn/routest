@@ -183,6 +183,9 @@ Expectation.prototype.execute = function(testResult){
   }catch(err){
     console.log(this);
   }
+  if(this.oppositeDay){
+     this.not.isOppositeDay = true;
+  }
   return this.oppositeDay?this.not:this
 }
 

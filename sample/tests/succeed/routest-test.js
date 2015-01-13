@@ -143,6 +143,9 @@ test_env
 
        expect("the returned last name", body.last)
         .toBe("matched in the database",result[0].last);
+
+       expect("the returned last name", body.last)
+        .not.toBe("matched in the database", 'stupid');
      });
 
   })

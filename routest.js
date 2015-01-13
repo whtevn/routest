@@ -78,10 +78,10 @@ Routest.run = function(promise){
 Routest.report = function(){
   var total      = this.runner.store.length
     , successful = _.reject(this.runner.store, function(test){
-      return !test.result
+      return test.isOppositeDay?test.result:!test.result
     })
     , failing    =  _.reject(this.runner.store, function(test){
-      return test.result
+      return test.isOppositeDay?(!test.result):test.result
     })
     , success = (total == successful.length)
     ;
