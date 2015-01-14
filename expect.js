@@ -49,7 +49,7 @@ Expectation.prototype.foundIn = function(description, value){
       ;
     haystack = testValue.map(JSON.stringify);
     needle   = JSON.stringify(original);
-    return this.execute(haystack.indexOf(needle) > -1);
+    return haystack.indexOf(needle) > -1;
   });
 }
 
