@@ -1,2 +1,2 @@
-return require('../../devour')(__dirname);
+return require('../../../devour')(__dirname);
 

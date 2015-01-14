@@ -13,7 +13,10 @@ Routest.runner = {
     this.store.push(item);
     return item
   },
-  store: []
+  store: [],
+  report: function(item){
+    console.log(item.message);
+  }
 };
 
 Routest.situations = [];
@@ -64,11 +67,37 @@ Routest.run = function(promise){
               return Routest.run(sitch.promise);
             })
   }else{
-    promise.then(function(){
+    return promise.then(function(){
+      return Routest;
       //console.log("that's all folks");
       // whole file report could go here
     })
   }
+}
+
+Routest.report = function(){
+  var total      = this.runner.store.length
+    , successful = _.reject(this.runner.store, function(test){
+      return test.isOppositeDay?test.result:!test.result
+    })
+    , failing    =  _.reject(this.runner.store, function(test){
+      return test.isOppositeDay?(!test.result):test.result
+    })
+    , success = (total == successful.length)
+    ;
+
+  console.log("\nResult:".yellow)
+  console.log("\t", (total+" tests ran")[success?'green':'red'])
+  console.log("\t", (successful.length+" tests successful").green);
+  if(failing.length){
+    console.log("\t", (failing.length+" tests failed").red);
+  }
+  Routest.final = {
+    total: total
+  , succeed: successful.length
+  , fail: failing.length
+  }
+  return Routest;
 }
 
 module.exports = Routest;

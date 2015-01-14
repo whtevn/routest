@@ -143,17 +143,16 @@ test_env
 
        expect("the returned last name", body.last)
         .toBe("matched in the database",result[0].last);
+
+       expect("the returned last name", body.last)
+        .not.toBe("matched in the database", 'stupid');
      });
 
-  })
-  .after(function(){
-    // be nice and clean up the database if you change it
-    return test_env.fixtures();
   })
 
 
 module.exports = Routest.run()
   .then(function(result){
     db.kill();
-    return result;
+    return result.report();
   });

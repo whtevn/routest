@@ -123,7 +123,7 @@ Expectation.prototype.haveSet = function(description, value){
   this.testValue = determineValueOf(description, value); 
   this.verb = "to have set";
   return this.execute(function(original, testValue){
-    return original[testValue]
+    return original.hasOwnProperty(testValue)
   })
 }
 
@@ -177,7 +177,15 @@ Expectation.prototype.execute = function(testResult){
                         , this.batch
                         , this.silenceOriginal
                         );
-  console.log(this.message);
+
+  try{
+    this.runner.report(this);
+  }catch(err){
+    console.log(this);
+  }
+  if(this.oppositeDay){
+     this.not.isOppositeDay = true;
+  }
   return this.oppositeDay?this.not:this
 }
 
@@ -232,7 +240,7 @@ function determineValueOf(description, value){
 function run(runner){
   return function(description, value){
     var expectation = new Expectation(description, value);
-    expectation.runner = runner;
+    expectation.runner = expectation.not.runner = runner;
     return runner.add(expectation);
   }
 }

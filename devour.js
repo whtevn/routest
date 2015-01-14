@@ -17,6 +17,7 @@ function listDirectory(dir){
 
 function eatAndRun(list){
   var item = list.shift();
+  var report = [];
   return item && fs.isFile(item)
     .then(function(is_file){
       if(item && is_file && !item.match(/(\/|^)\./) && item.match(/test.js$/)){
@@ -25,12 +26,12 @@ function eatAndRun(list){
         return require(item)
       }
     })
-    .then(function(){
+    .then(function(item){
       return eatAndRun(list);
     })
     .catch(function(err){
       console.log(err);
-    });
+    })
 }
 
 module.exports = listDirectory;
