@@ -15,7 +15,7 @@ Routest.runner = {
   },
   store: [],
   report: function(item){
-    console.log(item.message);
+    console.log(item.message, "\n");
   }
 };
 
