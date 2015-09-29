@@ -1,104 +1,69 @@
-var Routest = {}
-  , _          = require('underscore')
-  , colors     = require('colors')
-  , httpromise = require('httpromise')
-  , configen   = require('configen')
-  , confoo     = require('confoo').find
-  , q          = require('Q')
-  , situation  = require('./situation')
-  ;
+var httpromise = require('httpromise');
+var confoo = require('confoo').find;
+var configen = require('configen');
+var extend = require('underscore').extend;
 
-Routest.runner = {
-  add: function(item){
-    this.store.push(item);
-    return item
-  },
-  store: [],
-  report: function(item){
-    console.log(item.message, "\n");
-  }
-};
-
-Routest.situations = [];
-
-Routest.setup = function(file, setup){
-  var sitch
-    , config
-    , deferred = q.defer()
-    ;
-  particulars = confoo(file)
+function createApi(file, name, methods){
+  var route = function() {};
+  route.__definition = confoo(file)
     .then(function(file){
       conf = configen.generate(file);
       conf.register(new httpromise());
-      return Routest.configen = conf._.then(function(api){
-        Routest.api = api;
-        return Routest;
-      });
+      return conf._
+    })
+  for(name in methods){
+    route = assign_as_method(route, name, methods[name]);
+  }
+  return route;
+}
 
-      return configen._;
+function assign_as_method(obj, name, route){
+  obj[name] = function(opts){
+    var execute = obj.__definition.then(function(api){
+      var start = +(new Date());
+      return api[route.method.toLowerCase()](route.path, opts).
+        then(function(result){
+          result.__timer_end   = +(new Date());
+          result.__timer_start = start;
+          result.__duration = result.__timer_end - result.__timer_start 
+          return result
+        })
     });
-  sitch = new situation(setup, particulars, deferred); 
-  Routest.situations.push({
-    promise: deferred.promise
-  , deferred: deferred
-  , situation: sitch
-  });
-  return sitch
+
+    var result = {
+      response: function(){
+        return execute.then(function(result){
+          return result.body;
+        })
+      },
+      status_Code: function(){
+        return execute.then(function(result){
+          return result.statusCode;
+        })
+      },
+      duration: function(){
+        return execute.then(function(result){
+          return result.__duration
+        })
+      },
+      result: function(){
+        return execute.then(function(result){
+          return {
+            response: result.body
+          , code: result.statusCode
+          , duration: result.__duration
+          }
+        })
+      },
+      refresh: function(opt2){
+        extend(opts,  opt2 || {});
+        return obj[name](opts)
+      }
+    }
+
+    return result
+  }
+  return obj
 }
 
-Routest.run = function(promise){
-  var sitch = Routest.situations.shift()
-    , deferred = q.defer()
-    ;
-  if(!promise){
-    promise = deferred.promise;
-    deferred.resolve();
-  }
-
-  if(sitch){
-    return promise
-            .then(function(){
-              return sitch.situation.eatAndRun()
-                .then(function(){
-                  sitch.deferred.resolve();
-                })
-            })
-            .then(function(){
-              return Routest.run(sitch.promise);
-            })
-  }else{
-    return promise.then(function(){
-      return Routest;
-      //console.log("that's all folks");
-      // whole file report could go here
-    })
-  }
-}
-
-Routest.report = function(){
-  var total      = this.runner.store.length
-    , successful = _.reject(this.runner.store, function(test){
-      return test.isOppositeDay?test.result:!test.result
-    })
-    , failing    =  _.reject(this.runner.store, function(test){
-      return test.isOppositeDay?(!test.result):test.result
-    })
-    , success = (total == successful.length)
-    ;
-
-  console.log("\nResult:".yellow)
-  console.log("\t", (total+" tests ran")[success?'green':'red'])
-  console.log("\t", (successful.length+" tests successful").green);
-  if(failing.length){
-    console.log("\t", (failing.length+" tests failed").red);
-  }
-  Routest.final = {
-    total: total
-  , succeed: successful.length
-  , fail: failing.length
-  }
-  return Routest;
-}
-
-module.exports = Routest;
-
+module.exports = createApi
