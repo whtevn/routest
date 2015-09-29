@@ -18,7 +18,7 @@ function createApi(file, name, methods){
 }
 
 function assign_as_method(obj, name, route){
-  obj[name] = function(opts){
+  obj.prototype[name] = function(opts){
     var execute = obj.__definition.then(function(api){
       var start = +(new Date());
       return api[route.method.toLowerCase()](route.path, opts).
@@ -31,35 +31,30 @@ function assign_as_method(obj, name, route){
     });
 
     var result = {
-      response: function(){
-        return execute.then(function(result){
-          return result.body;
-        })
-      },
-      status_Code: function(){
-        return execute.then(function(result){
-          return result.statusCode;
-        })
-      },
-      duration: function(){
-        return execute.then(function(result){
-          return result.__duration
-        })
-      },
-      result: function(){
-        return execute.then(function(result){
-          return {
-            response: result.body
-          , code: result.statusCode
-          , duration: result.__duration
-          }
-        })
-      },
+      response: execute.then(function(result){
+        return result.body;
+      }),
+      status_Code: execute.then(function(result){
+        return result.statusCode;
+      }),
+      duration: execute.then(function(result){
+        return result.__duration
+      }),
+      result: execute.then(function(result){
+        return {
+          response: result.body
+        , code: result.statusCode
+        , duration: result.__duration
+        }
+      }),
       refresh: function(opt2){
         extend(opts,  opt2 || {});
         return obj[name](opts)
       }
     }
+
+    result.finished = result.result;
+    result.reload   = result.refresh;
 
     return result
   }
