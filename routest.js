@@ -5,66 +5,65 @@ var extend = require('underscore').extend;
 
 function createApi(file, name, methods){
   var route = function() {};
-  route._definition = confoo(file)
+  route.__definition = confoo(file)
     .then(function(file){
       conf = configen.generate(file);
       conf.register(new httpromise());
       return conf._
     })
-  for(method in methods){
-    route = assign_as_method(route, method, methods[method]);
+  for(name in methods){
+    route = assign_as_method(route, name, methods[name]);
   }
   return route;
 }
 
 function assign_as_method(obj, name, route){
   obj[name] = function(opts){
-    var execute = obj._definition.then(function(api){
-      return api[route.method.toLowerCase()](route.path, opts)
-    })
+    var execute = obj.__definition.then(function(api){
+      var start = +(new Date());
+      return api[route.method.toLowerCase()](route.path, opts).
+        then(function(result){
+          result.__timer_end   = +(new Date());
+          result.__timer_start = start;
+          result.__duration = result.__timer_end - result.__timer_start 
+          return result
+        })
+    });
+
     var result = {
       response: function(){
         return execute.then(function(result){
-          console.log(result);
+          return result.body;
         })
       },
-      code: function(){
+      status_Code: function(){
         return execute.then(function(result){
-          console.log(result);
+          return result.statusCode;
         })
       },
       duration: function(){
         return execute.then(function(result){
-          console.log(result);
+          return result.__duration
         })
       },
       result: function(){
         return execute.then(function(result){
-          console.log(result);
+          return {
+            response: result.body
+          , code: result.statusCode
+          , duration: result.__duration
+          }
         })
       },
+      refresh: function(opt2){
+        extend(opts,  opt2 || {});
+        return obj[name](opts)
+      }
     }
 
-    result.refresh = function(opt2){
-      extend(opts,  opt2 || {});
-      return obj[name](opts)
-    }
     return result
   }
   return obj
-}
-
-var route = function(api, methods){
-  this.api = api;
-  this.methods = methods;
-}
-
-route.prototype.execute = function(method, opts){
-  var _this = this;
-  return function(){
-    console.log(method);
-    _this.api[method].call(opts)
-  }
 }
 
 module.exports = createApi

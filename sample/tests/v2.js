@@ -23,12 +23,12 @@ var all_users = UserApi
                   , body: ("" || {})
                   })
 
-all_users.response()
-all_users.code();
-all_users.duration();
-all_users.result(); // { response: ..., code: ..., duration: ... }
+console.log(all_users.response());
+console.log(all_users.status_Code());
+console.log(all_users.duration());
+console.log(all_users.result()); // { response: ..., code: ..., duration: ... }
 
-console.log(all_users.refresh());
+//console.log(all_users.refresh());
 
 
 /*
