@@ -48,13 +48,12 @@ function assign_as_method(obj, name, route){
         }
       }),
       refresh: function(opt2){
-        extend(opts,  opt2 || {});
-        return obj[name](opts)
+        extend(opts, opt2 || {})
+        return obj.prototype[name](opts);
       }
     }
 
     result.finished = result.result;
-    result.reload   = result.refresh;
 
     return result
   }

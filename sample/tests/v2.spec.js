@@ -50,6 +50,7 @@ describe("when adding a user", function() {
     var updated_users;
      beforeEach(function(next) {
        all_users_query.refresh()
+        .finished
         .then(function(result){
           result.response = JSON.parse(result.response);
           updated_users = result;
