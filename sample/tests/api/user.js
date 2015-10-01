@@ -1,4 +1,4 @@
-var Routest = require('../../../routest');
+var Routest = require('../../../index');
 var UserApi = Routest("sample-app.json"
   , "user"
   , {
