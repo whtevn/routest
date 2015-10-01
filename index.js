@@ -19,6 +19,11 @@ function createApi(file, name, methods){
 
 function assign_as_method(obj, name, route){
   obj.prototype[name] = function(opts){
+    if(opts && opts.route){
+      for(arg in opts.route){
+        route.path = route.path.replace(":"+arg, opts.route[arg]);
+      }
+    }
     var execute = obj.__definition.then(function(api){
       var start = +(new Date());
       return api[route.method.toLowerCase()](route.path, opts).
