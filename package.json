@@ -1,41 +1,41 @@
 {
-  "name": "routest",
-  "author": "Evan Short",
-  "description": "simple, stupid, agnostic integration testing for APIs and the mysql databases that serve them",
-  "version": "0.3.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/whtevn/routest.git"
-  },
-  "bugs": {
-    "url": "https://github.com/whtevn/routest/issues"
-  },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/whtevn/routest/blob/master/LICENSE"
-    }
-  ],
-  "engines": {
-    "node": ">=0.8.26"
-  },
-  "keywords": [
-    "api",
-    "integration",
-    "testing",
-    "utility"
-  ],
-  "scripts": {},
-  "main": "./index.js",
-  "dependencies": {
-    "configen": "latest",
-    "confoo": "latest",
-    "httpromise": "latest",
-    "underscore": "~1.7.0"
-  },
-  "devDependencies": {
-    "body-parser": "^1.10.0",
-    "express": "^4.10.4",
-    "node-uuid": "^1.4.2"
-  }
+	"name": "routest",
+	"author": "Evan Short",
+	"description": "simple, stupid, agnostic integration testing for APIs and the mysql databases that serve them",
+	"version": "0.3.1",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/whtevn/routest.git"
+	},
+	"bugs": {
+		"url": "https://github.com/whtevn/routest/issues"
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "https://github.com/whtevn/routest/blob/master/LICENSE"
+		}
+	],
+	"engines": {
+		"node": ">=0.8.26"
+	},
+	"keywords": [
+		"api",
+		"integration",
+		"testing",
+		"utility"
+	],
+	"scripts": {},
+	"main": "./index.js",
+	"dependencies": {
+		"configen": "latest",
+		"confoo": "latest",
+		"httpromise": "latest",
+		"underscore": "~1.7.0"
+	},
+	"devDependencies": {
+		"body-parser": "^1.10.0",
+		"express": "^4.10.4",
+		"node-uuid": "^1.4.2"
+	}
 }
