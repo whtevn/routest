@@ -5,6 +5,7 @@ var extend = require('underscore').extend;
 
 function createApi(file, name, methods){
   var route = function() {};
+  route.__methods = methods;
   route.__definition = confoo(file)
     .then(function(file){
       conf = configen.generate(file);
