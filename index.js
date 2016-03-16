@@ -51,6 +51,7 @@ function assign_as_method(obj, name, route){
         return {
           response: result.body
         , code: result.statusCode
+        , headers: result.headers
         , duration: result.__duration
         }
       }),
