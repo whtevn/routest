@@ -38,6 +38,7 @@ function assign_as_method(obj, name, route){
     });
 
     var result = {
+      promise: execute,
       json: execute.then(function(result){
         return JSON.parse(result.body);
       }),
